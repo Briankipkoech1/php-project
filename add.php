@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
+include('config/db_connect.php');
+
 $title=$email=$ingredients='';
 $errors=array('email'=>'', 'title'=>'', 'ingredients'=>'');
 
@@ -35,8 +37,22 @@ if (isset($_POST['submit'])) {
     if(array_filter($errors)){
 
     }else{
-        //redirecting to index page
-        header('location: index.php');
+
+        //mysqli_real_escape_string used to protect against sql injections
+        $email=mysqli_real_escape_string($conn, $_POST['email']);
+        $title=mysqli_real_escape_string($conn, $_POST['title']);
+        $ingredients=mysqli_real_escape_string($conn, $_POST['ingredients']);
+        //insert into db
+        $sql="INSERT INTO icecream(title, email, ingredients) VALUES('$title', '$email', '$ingredients')";
+        if(mysqli_query($conn, $sql)){
+            //redirecting to index page
+            header('location: index.php');
+
+        }else{
+            echo 'query error: '. mysqli_error($conn);
+        };
+        
+        
     };
 };
 
